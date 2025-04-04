@@ -19,7 +19,6 @@ def correct_text(text):
     words = text.split()
     corrected_words = []
     for word in words:
-        print(sym_spell.lookup(word, Verbosity.CLOSEST, max_edit_distance=2))
         suggestions = sym_spell.lookup(word, Verbosity.CLOSEST, max_edit_distance=2)
         corrected_words.append(suggestions[0].term if suggestions else word)
     return " ".join(corrected_words)

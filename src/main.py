@@ -4,10 +4,10 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from starlette.requests import Request
 from src.classes.DT import DT
+from pathlib import Path
 import time
 import json
 import asyncio
-
 
 # Инициализация FastAPI
 app = FastAPI()
@@ -38,8 +38,10 @@ async def upload_opus_file(file: UploadFile = File(...)):
     if not file.filename.endswith(".opus"):
         raise HTTPException(status_code=400, detail="Only OPUS files are allowed")
 
-    # Сохраняем файл на сервере
-    file_path = f"G:/PROGRAMMS/Projects/GigaAM/voice_dataset/prod_dataset/uploaded_{file.filename}"
+    BASE_DIR = Path(__file__).resolve().parent.parent
+    file_path = BASE_DIR / "voice_dataset" / "prod_dataset" / f"uploaded_{file.filename}"
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    print("Saving file to:", file_path)
     with open(file_path, "wb") as f:
         f.write(await file.read())
 

@@ -1,0 +1,17 @@
+LICENSE
+README.md
+setup.py
+gigaam/__init__.py
+gigaam/decoder.py
+gigaam/decoding.py
+gigaam/encoder.py
+gigaam/model.py
+gigaam/onnx_utils.py
+gigaam/preprocess.py
+gigaam/utils.py
+gigaam/vad_utils.py
+gigaam.egg-info/PKG-INFO
+gigaam.egg-info/SOURCES.txt
+gigaam.egg-info/dependency_links.txt
+gigaam.egg-info/requires.txt
+gigaam.egg-info/top_level.txt
