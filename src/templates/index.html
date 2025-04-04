@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="1">
+    <title>Medical Fields</title>
+
+    <style>
+        table {
+            width: 50%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+    </style>
+
+</head>
+<body>
+    <h1>Medical Fields</h1>
+    {% if fields %}
+    <table>
+        <tr>
+            <th>Anchor</th>
+            <th>Value</th>
+        </tr>
+        {% for key, value in fields.items() %}
+        <tr>
+            <td>{{ key }}</td>
+            <td>{{ value }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No medical fields parsed yet.</p>
+    {% endif %}
+</body>
+</html>

@@ -16,11 +16,23 @@ class GigaAM(nn.Module):
     Giga Acoustic Model: Self-Supervised Model for Speech Tasks
     """
 
+    # def __init__(self, cfg: omegaconf.DictConfig):
+    #     super().__init__()
+    #     self.cfg = cfg
+    #     self.preprocessor = hydra.utils.instantiate(self.cfg.preprocessor)
+    #     self.encoder = hydra.utils.instantiate(self.cfg.encoder)
+
     def __init__(self, cfg: omegaconf.DictConfig):
         super().__init__()
         self.cfg = cfg
         self.preprocessor = hydra.utils.instantiate(self.cfg.preprocessor)
         self.encoder = hydra.utils.instantiate(self.cfg.encoder)
+        
+        # Автоматически выбираем устройство: GPU, если доступен, иначе CPU
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        
+        # Переносим модель на устройство
+        self.to(self.device)
 
     def forward(
         self,
@@ -49,9 +61,13 @@ class GigaAM(nn.Module):
         Prepare an audio file for processing by loading it onto
         the correct device and converting its format.
         """
-        wav = load_audio(wav_file)
-        wav = wav.to(self._device).to(self._dtype).unsqueeze(0)
-        length = torch.full([1], wav.shape[-1], device=self._device)
+        # wav = load_audio(wav_file)
+        # wav = wav.to(self._device).to(self._dtype).unsqueeze(0)
+        # length = torch.full([1], wav.shape[-1], device=self._device)
+        # return wav, length
+
+        wav = load_audio(wav_file).to(self.device).to(self._dtype).unsqueeze(0)  # Отправляем аудио на нужное устройство
+        length = torch.full([1], wav.shape[-1], device=self.device)  # Убедитесь, что длина тоже на нужном устройстве
         return wav, length
 
     def embed_audio(self, wav_file: str) -> Tuple[Tensor, Tensor]:
