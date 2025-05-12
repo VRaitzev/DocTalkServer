@@ -32,8 +32,6 @@ class DT:
             texts=input_texts, apply_sbd=False
         )
 
-        # Объединяем ключи и значения в новый словарь
-        self.post_medical_fields = dict(zip(keys, results))
 
     def recognize(self, audio_path: str):
         self.transcribe(audio_path)
