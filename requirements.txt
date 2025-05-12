@@ -8,3 +8,7 @@ torchaudio<=2.5.1
 onnx==1.17.0
 onnxruntime==1.17.3
 tqdm
+fastapi
+uvicorn
+jinja2
+punctuators

@@ -2,7 +2,7 @@ import logging
 import os
 import urllib.request
 from typing import Optional, Tuple, Union
-
+import ssl
 import torch
 from tqdm import tqdm
 
@@ -35,7 +35,10 @@ def _download_file(file_url: str, file_path: str) -> str:
 
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-    with urllib.request.urlopen(file_url) as source, open(file_path, "wb") as output:
+    # Создаем SSL-контекст, который не проверяет сертификаты
+    ssl_context = ssl._create_unverified_context()
+
+    with urllib.request.urlopen(file_url, context=ssl_context) as source, open(file_path, "wb") as output:
         with tqdm(
             total=int(source.info().get("Content-Length", 0)),
             ncols=80,

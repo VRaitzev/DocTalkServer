@@ -1,50 +1,306 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="1">
-    <title>Medical Fields</title>
-
-    <style>
-        table {
-            width: 50%;
-            margin: 20px auto;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-    </style>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Протокол консультации</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  
 </head>
 <body>
-    <h1>Medical Fields</h1>
-    {% if fields %}
-    <table>
-        <tr>
-            <th>Anchor</th>
-            <th>Value</th>
-        </tr>
-        {% for key, value in fields.items() %}
-        <tr>
-            <td>{{ key }}</td>
-            <td>{{ value }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-    <p>No medical fields parsed yet.</p>
-    {% endif %}
+<script>
+  // Отмечаем поля как "грязные", если пользователь их редактировал
+  let previousFields = {};
+  function markDirty(event) {
+    event.target.dataset.dirty = "true";
+  }
+
+  // Навешиваем обработчики на все поля после загрузки страницы
+  window.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("input, textarea, select").forEach(el => {
+      el.addEventListener("input", markDirty);
+    });
+    
+    fetchUpdatedFields(); // Первая загрузка
+  });
+
+  async function fetchUpdatedFields() {
+  try {
+    const response = await fetch("/get_fields/");
+    if (!response.ok) throw new Error("Ошибка запроса");
+
+    const data = await response.json();
+    const fields = data.fields;
+
+    for (const [key, value] of Object.entries(fields)) {
+      const el = document.getElementById(key);
+      if (!el) continue;
+
+      const previousValue = previousFields[key];
+
+      // Если пользователь редактировал поле, но значение на сервере поменялось — перезаписываем
+      const isDirty = el.dataset.dirty === "true";
+      const hasChangedOnServer = previousValue !== value;
+
+      if (!isDirty || hasChangedOnServer) {
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+          el.value = value;
+        } else if (el.tagName === 'SELECT') {
+          Array.from(el.options).forEach(opt => {
+            opt.selected = opt.value === value;
+          });
+        }
+
+        // Обновим локальное значение после изменения
+        el.dataset.dirty = "false";
+      }
+    }
+
+    // Сохраняем текущее состояние как предыдущее
+    previousFields = { ...fields };
+  } catch (err) {
+    console.error("Ошибка при обновлении данных:", err);
+  }
+  }
+
+  // Обновляем каждые 0,5 секунд
+  setInterval(fetchUpdatedFields, 500);
+</script>
+
+
+  <img src="/static/logo.png" alt="Логотип" class="logo" />
+  <div class="container">
+    <h1>Протокол Консультации
+        <!-- <input type="date" id="date" /> -->
+      </h1>
+
+    <div class="patient-info">
+      <label>ФИО пациента <input id="фио пациента" type="text"/></label>
+      <label>Пол
+        <select id="пол" name="gender">
+    <option value="Мужской.">Мужской</option>
+    <option value="Женский.">Женский</option>
+        </select>
+      </label>
+      
+      <label>Дата рождения <input id="дата рождения" type="text" /></label>
+      <label>Номер медкарты
+        <input id="номер медкарты" type="text" name="medCard" />
+      </label>
+      
+    </div>
+
+    <div class="columns">
+      <div class="column">
+        <div class="field">
+          <label>Жалобы</label>
+          <textarea id="жалобы"></textarea>
+        </div>
+        <div class="field">
+          <label>Анамнез жизни</label>
+          <textarea id="анамнез жизни"></textarea>
+        </div>
+        <div class="field">
+          <label>Неврологический статус</label>
+          <textarea id="неврологический статус"></textarea>
+        </div>
+        <div class="field">
+          <label>Речь</label>
+          <textarea id="речь"></textarea>
+        </div>
+        <div class="field">
+          <label>Гнозис</label>
+          <textarea id="гнозис"></textarea>
+        </div>
+        <div class="field">
+          <label>Глазные щели</label>
+          <textarea id="глазные щели"></textarea>
+        </div>
+        <div class="field">
+          <label>Зрачки</label>
+          <textarea id="зрачки"></textarea>
+        </div>
+        <div class="field">
+          <label>Косоглазие</label>
+          <textarea id="косоглазие"></textarea>
+        </div>
+        <div class="field">
+          <label>Движение глазных яблок</label>
+          <textarea id="движение глазных яблок"></textarea>
+        </div>
+        <div class="field">
+          <label>Двигательная система</label>
+          <textarea id="двигательная система"></textarea>
+        </div>
+        <div class="field">
+          <label>Мышечная сила в нижних конечностях</label>
+          <textarea id="мышечная сила в нижних конечностях"></textarea>
+        </div>
+        <div class="field">
+          <label>Мышечный тонус</label>
+          <textarea id="мышечный тонус"></textarea>
+        </div>
+        <div class="field">
+          <label>Движение в позвоночнике</label>
+          <textarea id="движение в позвоночнике"></textarea>
+        </div>
+        <div class="field">
+          <label>Симптомы натяжения Ласега</label>
+          <textarea id="симптомы натяжения ласега"></textarea>
+        </div>
+        <div class="field">
+          <label>Патологические знаки</label>
+          <textarea id="патологические знаки"></textarea>
+        </div>
+        <div class="field">
+          <label>Походка</label>
+          <textarea id="походка"></textarea>
+        </div>
+        <div class="field">
+          <label>Пальценосовая проба</label>
+          <textarea id="пальценосовая проба"></textarea>
+        </div>
+        <div class="field">
+          <label>Пяточно-коленная проба</label>
+          <textarea id="пяточно-коленная проба"></textarea>
+        </div>
+        <div class="field">
+          <label>Гиперкинезы</label>
+          <textarea id="гиперкинезы"></textarea>
+        </div>
+        <div class="field">
+          <label>Вегетативные функции</label>
+          <textarea id="вегетативные функции"></textarea>
+        </div>
+        <div class="field">
+          <label>Лечение</label>
+          <textarea id="лечение"></textarea>
+        </div>
+        <div class="field">
+          <label>Явка</label>
+          <textarea id="явка"></textarea>
+        </div>
+        <div class="field">
+          <label>Вид обращения</label>
+          <textarea id="вид обращения"></textarea>
+        </div>
+      </div>
+
+      <div class="column">
+        <div class="field">
+          <label>Анамнез заболевания</label>
+          <textarea id="анамнез заболевания"></textarea>
+        </div>
+        <div class="field">
+          <label>Соматический статус</label>
+          <textarea id="соматический статус"></textarea>
+        </div>
+        <div class="field">
+          <label>Эмоциональная сфера</label>
+          <textarea id="эмоциональная сфера"></textarea>
+        </div>
+        <div class="field">
+          <label>Праксис</label>
+          <textarea id="праксис"></textarea>
+        </div>
+        <div class="field">
+          <label>Обоняние</label>
+          <textarea id="обоняние"></textarea>
+        </div>
+        <div class="field">
+          <label>Птоз</label>
+          <textarea id="птоз"></textarea>
+        </div>
+        <div class="field">
+          <label>Анизокория</label>
+          <textarea id="анизокория"></textarea>
+        </div>
+        <div class="field">
+          <label>Реакция на свет</label>
+          <textarea id="реакция на свет"></textarea>
+        </div>
+        <div class="field">
+          <label>5 7 8 9 10 11 12 пары ЧМН</label>
+          <textarea id="пары чмн"></textarea>
+        </div>
+        <div class="field">
+          <label>Мышечная сила в верхних конечностях</label>
+          <textarea id="мышечная сила в верхних конечностях"></textarea>
+        </div>
+        <div class="field">
+          <label>Рефлексы</label>
+          <textarea id="рефлексы"></textarea>
+        </div>
+        <div class="field">
+          <label>Напряжение мышц спины</label>
+          <textarea id="напряжение мышц спины"></textarea>
+        </div>
+        <div class="field">
+          <label>Пальпация и перкуссия позвоночника</label>
+          <textarea id="пальпация и перкуссия позвоночника"></textarea>
+        </div>
+        <div class="field">
+          <label>Симптомы натяжения Нери</label>
+          <textarea id="симптомы натяжения нери"></textarea>
+        </div>
+        <div class="field">
+          <label>Симптомы натяжения Вассермана</label>
+          <textarea id="симптомы натяжения вассермана"></textarea>
+        </div>
+        <div class="field">
+          <label>Чувствительность</label>
+          <textarea id="чувствительность"></textarea>
+        </div>
+        <div class="field">
+          <label>В позе Ромберга</label>
+          <textarea id="в позе Ромберга"></textarea>
+        </div>
+        <div class="field">
+          <label>Проба на адиадохокинез</label>
+          <textarea id="проба на адиадохокинез"></textarea>
+        </div>
+        <div class="field">
+          <label>Экстрапирамидная система</label>
+          <textarea id="экстрапирамидная система"></textarea>
+        </div>
+        <div class="field">
+          <label>Менингеальные знаки</label>
+          <textarea id="менингеальные знаки"></textarea>
+        </div>
+        <div class="field">
+          <label>Дермографизм</label>
+          <textarea id="дермографизм"></textarea>
+        </div>
+        <div class="field">
+          <label>Рекомендации</label>
+          <textarea id="рекомендации"></textarea>
+        </div>
+        <div class="field">
+          <label>Степень тяжести</label>
+          <textarea id="степень тяжести"></textarea>
+        </div>
+        <div class="field">
+          <label>Нозологическая единица диагноза</label>
+          <textarea id="нозологическая единица диагноза"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="diagnosis-container">
+        <div class="field">
+          <label for="diagnosis">Диагноз</label>
+          <textarea class="diagnosis" id="диагноз" name="diagnosis"></textarea>
+        </div>
+      </div>
+      
+
+   <!-- //<div class="buttons">
+      <button onclick="alert('Сохранение пока не реализовано')">💾 Сохранить</button>
+      <button onclick="window.print()">📄 Экспорт в PDF</button>
+      <button onclick="alert('Голосовой ввод пока не работает')">🎙️ НАЧАТЬ ГОЛОСОВОЙ ВВОД</button>
+    </div>
+  </div> -->
+
+  <!-- <script src="script.js"></script> -->
 </body>
 </html>
